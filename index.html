@@ -497,9 +497,7 @@ function renderMingguan() {
     el("td", null, el("span", { class: "chip " + ({ ok: "ok", belum: "belum", hal: "hal", future: "future" })[r.st], text: r.st === "belum" ? `Belum lengkap · ${r.belum} hari kosong` : ST_LABEL[r.st] }))
   )));
   $("tabelPekan").replaceChildren(el("thead", null, head), body);
-  $("legenda").textContent = elapsed === 0
-    ? "Pekan ini belum dimulai, jadi belum ada yang dihitung."
-    : `Dihitung ${elapsed} dari 7 hari yang sudah berjalan, mulai sejak anggota bergabung. “Target terpenuhi” berarti tiap hari berjalan sudah diisi (minimal ${TARGET} halaman atau berhalangan). “Berhalangan” berarti seluruh hari berjalan ditandai berhalangan.`;
+  $("legenda").textContent = "";
 }
 
 /* ---------- admin ---------- */
