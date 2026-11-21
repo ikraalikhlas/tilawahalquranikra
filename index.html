@@ -1,0 +1,763 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#176b45">
+<title>Monitoring Tilawah IKRA AL-IKHLAS</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap">
+<style>
+  :root {
+    --bg: #f1f5f2; --surface: #ffffff; --ink: #1c2a23; --muted: #5d6c63; --line: #dce5df;
+    --head-1: #145c3c; --head-2: #1f7d53; --head-ink: #f2faf5;
+    --btn: #176b45; --btn-hover: #115536; --btn-ink: #ffffff;
+    --soft: #e3f2e9; --soft-ink: #14583a;
+    --ok-bg: #d8f0e1; --ok-ink: #145c3c;
+    --hal-bg: #e8eaea; --hal-ink: #46514b;
+    --warn-bg: #fcefcf; --warn-ink: #7a5400;
+    --err-bg: #fbe5e2; --err-ink: #9d2b25;
+    --focus: #6fbf93;
+    --font: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0e1612; --surface: #16211b; --ink: #e5eee8; --muted: #9bafa3; --line: #263529;
+      --head-1: #0f3a27; --head-2: #155238; --head-ink: #e8f6ee;
+      --btn: #2b9462; --btn-hover: #35a671; --btn-ink: #07140d;
+      --soft: #1b3828; --soft-ink: #9fe3bf;
+      --ok-bg: #1d3d2c; --ok-ink: #9fe3bf;
+      --hal-bg: #29322d; --hal-ink: #b9c6be;
+      --warn-bg: #3a2f12; --warn-ink: #f0c869;
+      --err-bg: #3c201e; --err-ink: #f2a8a2;
+      --focus: #3f9a6c; color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0e1612; --surface: #16211b; --ink: #e5eee8; --muted: #9bafa3; --line: #263529;
+    --head-1: #0f3a27; --head-2: #155238; --head-ink: #e8f6ee;
+    --btn: #2b9462; --btn-hover: #35a671; --btn-ink: #07140d;
+    --soft: #1b3828; --soft-ink: #9fe3bf;
+    --ok-bg: #1d3d2c; --ok-ink: #9fe3bf;
+    --hal-bg: #29322d; --hal-ink: #b9c6be;
+    --warn-bg: #3a2f12; --warn-ink: #f0c869;
+    --err-bg: #3c201e; --err-ink: #f2a8a2;
+    --focus: #3f9a6c; color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-size: 15px; line-height: 1.5; }
+  h1, h2, h3, p { margin: 0; }
+  h1, h2 { text-wrap: balance; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  [hidden] { display: none !important; }
+
+  .wrap { max-width: 1100px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+  .top { background: linear-gradient(135deg, var(--head-1), var(--head-2)); color: var(--head-ink); padding-top: calc(env(safe-area-inset-top, 0px) + 28px); padding-bottom: 26px; }
+  .top .wrap { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; justify-content: space-between; }
+  .brand { min-width: 0; }
+  .brand .org { font-size: 12px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; opacity: .85; }
+  .brand h1 { font-size: clamp(22px, 5vw, 32px); font-weight: 800; letter-spacing: -.01em; line-height: 1.15; margin-top: 4px; }
+  .target { font-size: 13px; font-weight: 600; background: rgba(255,255,255,.14); border: 1px solid rgba(255,255,255,.25); padding: 7px 12px; border-radius: 999px; white-space: nowrap; }
+
+  main { padding-block: 20px 8px; display: grid; gap: 18px; }
+  .banner { background: var(--warn-bg); color: var(--warn-ink); border-radius: 10px; padding: 11px 14px; font-weight: 600; font-size: 14px; }
+
+  .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 20px; min-width: 0; }
+  .panel + .panel { margin-top: 18px; }
+  .panel-head { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 4px 16px; margin-bottom: 16px; }
+  .panel-head h2 { font-size: 19px; font-weight: 700; color: var(--soft-ink); }
+  .tgl { font-size: 14px; font-weight: 600; color: var(--muted); }
+  .note { font-size: 13px; color: var(--muted); margin-top: 14px; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 14px; }
+  .grid .wide { grid-column: 1 / -1; }
+  .f { min-width: 0; margin: 0; padding: 0; border: 0; }
+  label, legend { display: block; font-size: 13px; font-weight: 700; margin-bottom: 6px; padding: 0; }
+  .hint { font-weight: 500; color: var(--muted); font-size: 12px; margin-left: 4px; }
+  input[type="text"], input[type="password"], input[type="email"], input[type="number"], input[type="date"], select, textarea {
+    width: 100%; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); min-height: 42px;
+  }
+  textarea { min-height: 72px; resize: vertical; }
+  input:disabled { opacity: .55; cursor: not-allowed; }
+  :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+
+  .seg { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .seg legend { grid-column: 1 / -1; }
+  .opt { display: flex; align-items: center; gap: 8px; margin: 0; padding: 10px 12px; border: 1px solid var(--line); border-radius: 9px; background: var(--bg); font-weight: 600; cursor: pointer; min-height: 42px; }
+  .opt:has(input:checked) { border-color: var(--btn); background: var(--soft); color: var(--soft-ink); }
+  .opt input { accent-color: var(--btn); margin: 0; }
+
+  .actions { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+  .msg { font-size: 14px; font-weight: 600; min-width: 0; }
+  .msg.ok { color: var(--ok-ink); }
+  .msg.err { color: var(--err-ink); }
+
+  .btn { background: var(--btn); color: var(--btn-ink); border: 0; border-radius: 9px; padding: 10px 16px; font-weight: 700; cursor: pointer; min-height: 42px; }
+  .btn:hover { background: var(--btn-hover); }
+  .btn:disabled { opacity: .6; cursor: not-allowed; }
+  .btn.secondary { background: var(--soft); color: var(--soft-ink); }
+  .btn.secondary:hover { filter: brightness(.96); }
+  .btn.sm { padding: 6px 11px; min-height: 34px; font-size: 13px; }
+  .btn.danger { background: var(--err-bg); color: var(--err-ink); }
+
+  .tabs { display: flex; gap: 6px; border-bottom: 1px solid var(--line); overflow-x: auto; }
+  .tabs a { padding: 11px 16px; font-weight: 700; color: var(--muted); text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -1px; white-space: nowrap; }
+  .tabs a[aria-current="page"] { color: var(--soft-ink); border-bottom-color: var(--btn); }
+
+  .toolbar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 16px; }
+  .toolbar .spacer { flex: 1 1 0; }
+  .toolbar select, .toolbar input[type="date"] { width: auto; min-width: 150px; }
+  .toolbar strong { font-size: 15px; min-width: 0; }
+
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 16px; }
+  .card { border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; background: var(--surface); }
+  .card p { font-size: 13px; color: var(--muted); font-weight: 600; }
+  .card b { display: block; font-size: 28px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1.2; margin-top: 2px; }
+  .card.ok b { color: var(--ok-ink); }
+  .card.warn b { color: var(--warn-ink); }
+  .card.hal b { color: var(--hal-ink); }
+
+  .tablewrap { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+  table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  th, td { padding: 10px 12px; text-align: left; font-size: 14px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+  tbody tr:last-child td { border-bottom: 0; }
+  th { background: var(--soft); color: var(--soft-ink); font-size: 12px; letter-spacing: .04em; text-transform: uppercase; white-space: nowrap; }
+  th.c, td.c { text-align: center; }
+  th.today { background: var(--btn); color: var(--btn-ink); }
+  td.name { font-weight: 600; min-width: 140px; }
+  td.ket { max-width: 300px; color: var(--muted); overflow-wrap: anywhere; }
+  td.waktu { color: var(--muted); white-space: nowrap; }
+  .tbl-daily { min-width: 700px; }
+  .tbl-week { min-width: 820px; }
+  .empty { text-align: center; color: var(--muted); padding: 28px 16px; }
+
+  .chip { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+  .chip.ok { background: var(--ok-bg); color: var(--ok-ink); }
+  .chip.hal { background: var(--hal-bg); color: var(--hal-ink); }
+  .chip.belum { background: var(--err-bg); color: var(--err-ink); }
+  .chip.future { background: transparent; color: var(--muted); }
+
+  .members { list-style: none; margin: 14px 0 0; padding: 0; display: grid; }
+  .members li { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px 12px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .members li:last-child { border-bottom: 0; }
+  .members .who { min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
+  .members .btns { display: flex; gap: 6px; flex-wrap: wrap; }
+  .addrow { display: flex; flex-wrap: wrap; gap: 8px; }
+  .addrow input { flex: 1 1 220px; width: auto; }
+  .pinbox { margin-top: 14px; padding: 12px 14px; border-radius: 10px; background: var(--warn-bg); color: var(--warn-ink); display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; }
+  .pinbox b { font-size: 24px; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
+  .pinbox span { min-width: 0; font-weight: 600; }
+
+  footer { text-align: center; color: var(--muted); font-size: 13px; padding: 20px 16px calc(20px + env(safe-area-inset-bottom, 0px)); }
+
+  @media (max-width: 520px) { .panel { padding: 16px; } .tabs a { padding: 10px 12px; } }
+  @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; } }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <div class="brand">
+      <p class="org">IKRA AL-IKHLAS</p>
+      <h1>Monitoring Tilawah Al-Qur'an</h1>
+    </div>
+    <p class="target">Target harian minimal 5 halaman</p>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="banner" class="banner" hidden></div>
+
+  <section class="panel" aria-labelledby="formJudul">
+    <div class="panel-head">
+      <h2 id="formJudul">Laporan hari ini</h2>
+      <p class="tgl" id="tglHariIni"></p>
+    </div>
+    <form id="formLaporan" class="grid" novalidate>
+      <div class="f">
+        <label for="namaSel">Nama peserta</label>
+        <select id="namaSel"><option value="">Memuat daftar nama…</option></select>
+      </div>
+      <div class="f">
+        <label for="pin">PIN<span class="hint">dari admin</span></label>
+        <input type="password" id="pin" inputmode="numeric" autocomplete="off" maxlength="8" placeholder="6 angka">
+      </div>
+      <fieldset class="f seg">
+        <legend>Laporan bacaan</legend>
+        <label class="opt" for="jenisBaca"><input type="radio" name="jenis" id="jenisBaca" value="Sudah membaca" checked> Sudah membaca</label>
+        <label class="opt" for="jenisHalangan"><input type="radio" name="jenis" id="jenisHalangan" value="Berhalangan"> Berhalangan (-)</label>
+      </fieldset>
+      <div class="f">
+        <label for="halaman">Jumlah halaman<span class="hint" id="hintHalaman">minimal 5</span></label>
+        <input type="number" id="halaman" min="5" max="100" step="1" inputmode="numeric" placeholder="Contoh: 5">
+      </div>
+      <div class="f wide">
+        <label for="catatan">Keterangan<span class="hint">boleh dikosongkan</span></label>
+        <textarea id="catatan" maxlength="300" placeholder="Misalnya: sampai Juz 3, atau alasan berhalangan"></textarea>
+      </div>
+      <div class="actions wide">
+        <button class="btn" id="simpan" type="submit">Simpan laporan</button>
+        <p id="pesan" class="msg" role="status" aria-live="polite"></p>
+      </div>
+    </form>
+    <p class="note">Laporan hanya bisa diisi untuk hari ini (WIB). Tanggal yang sudah lewat terkunci. Hari ini boleh diperbarui lagi dengan menekan Simpan.</p>
+  </section>
+
+  <nav class="tabs" aria-label="Tampilan">
+    <a href="#harian" id="tabHarian">Harian</a>
+    <a href="#mingguan" id="tabMingguan">Rekap mingguan</a>
+    <a href="#admin" id="tabAdmin">Admin</a>
+  </nav>
+
+  <section id="viewHarian" aria-label="Laporan harian">
+    <div class="toolbar">
+      <label for="pilihTanggal" style="margin:0">Tanggal</label>
+      <input type="date" id="pilihTanggal">
+      <button type="button" class="btn secondary sm" id="hariIni">Hari ini</button>
+      <strong id="labelHari"></strong>
+    </div>
+    <div class="cards" id="kartuHari"></div>
+    <div class="tablewrap"><table class="tbl-daily" id="tabelHari"></table></div>
+  </section>
+
+  <section id="viewMingguan" aria-label="Rekap mingguan" hidden>
+    <div class="toolbar">
+      <button type="button" class="btn secondary sm" id="pekanPrev" aria-label="Pekan sebelumnya">‹</button>
+      <strong id="labelPekan"></strong>
+      <button type="button" class="btn secondary sm" id="pekanNext" aria-label="Pekan berikutnya">›</button>
+      <button type="button" class="btn secondary sm" id="pekanIni">Pekan ini</button>
+      <label for="filterStatus" class="hint" style="margin:0 0 0 4px">Tampilkan</label>
+      <select id="filterStatus">
+        <option value="">Semua anggota</option>
+        <option value="ok">Target terpenuhi</option>
+        <option value="belum">Belum lengkap</option>
+        <option value="hal">Berhalangan</option>
+      </select>
+      <span class="spacer"></span>
+      <button type="button" class="btn secondary sm" id="csvBtn">Unduh CSV</button>
+      <button type="button" class="btn secondary sm" id="pdfBtn">Unduh PDF</button>
+    </div>
+    <div class="cards" id="kartuPekan"></div>
+    <div class="tablewrap"><table class="tbl-week" id="tabelPekan"></table></div>
+    <p class="note" id="legenda"></p>
+  </section>
+
+  <section id="viewAdmin" aria-label="Admin" hidden>
+    <div class="panel" id="adminLogin">
+      <div class="panel-head"><h2>Masuk admin</h2></div>
+      <form id="formLogin" class="grid" novalidate>
+        <div class="f"><label for="aEmail">Email</label><input type="email" id="aEmail" autocomplete="username"></div>
+        <div class="f"><label for="aPass">Password</label><input type="password" id="aPass" autocomplete="current-password"></div>
+        <div class="actions wide">
+          <button class="btn" type="submit" id="loginBtn">Masuk</button>
+          <p id="loginPesan" class="msg" role="status" aria-live="polite"></p>
+        </div>
+      </form>
+    </div>
+
+    <div id="adminPanel" hidden>
+      <div class="toolbar">
+        <strong id="adminAs"></strong>
+        <span class="spacer"></span>
+        <button type="button" class="btn secondary sm" id="logoutBtn">Keluar</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Anggota dan PIN</h2></div>
+        <form id="formTambah" class="addrow">
+          <input type="text" id="namaBaru" maxlength="80" placeholder="Nama anggota baru" aria-label="Nama anggota baru">
+          <button type="submit" class="btn sm">Tambah anggota</button>
+        </form>
+        <div class="pinbox" id="pinBox" hidden>
+          <span id="pinTeks"></span><b id="pinAngka"></b>
+          <button type="button" class="btn secondary sm" id="pinSalin">Salin</button>
+        </div>
+        <p id="adminPesan" class="msg" role="status" aria-live="polite" style="margin-top:10px"></p>
+        <ul class="members" id="daftarAnggota"></ul>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><h2>Koreksi laporan</h2><p class="tgl">tanggal lewat boleh diubah admin</p></div>
+        <form id="formKoreksi" class="grid" novalidate>
+          <div class="f"><label for="kAnggota">Anggota</label><select id="kAnggota"></select></div>
+          <div class="f"><label for="kTanggal">Tanggal</label><input type="date" id="kTanggal"></div>
+          <fieldset class="f seg">
+            <legend>Status</legend>
+            <label class="opt" for="kBaca"><input type="radio" name="kjenis" id="kBaca" value="Sudah membaca" checked> Sudah membaca</label>
+            <label class="opt" for="kHal"><input type="radio" name="kjenis" id="kHal" value="Berhalangan"> Berhalangan (-)</label>
+          </fieldset>
+          <div class="f"><label for="kHalaman">Jumlah halaman</label><input type="number" id="kHalaman" min="5" max="100" step="1" inputmode="numeric"></div>
+          <div class="f wide"><label for="kCatatan">Keterangan</label><textarea id="kCatatan" maxlength="300"></textarea></div>
+          <div class="actions wide">
+            <button class="btn" type="submit" id="kSimpan">Simpan koreksi</button>
+            <button class="btn danger" type="button" id="kHapus">Hapus laporan ini</button>
+            <p id="kPesan" class="msg" role="status" aria-live="polite"></p>
+          </div>
+        </form>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>© 2026 IKRA AL-IKHLAS · Monitoring Tilawah Al-Qur'an</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.4/dist/jspdf.plugin.autotable.min.js"></script>
+<script>
+"use strict";
+
+/* ====== ISI DUA BARIS INI (Supabase > Project Settings > API) ====== */
+const SUPABASE_URL = "https://xpaytgnensxothbgyqas.supabase.co";
+const SUPABASE_KEY = "sb_publishable_VmHEs5nJtFAppPF1DLg0Cw_2uJIJ7Bq";
+/* Jangan pernah mengisi dengan service_role key. */
+
+const TARGET = 5;
+const TZ = "Asia/Jakarta";
+const HARI = ["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"];
+const $ = id => document.getElementById(id);
+
+const sb = (window.supabase && !SUPABASE_URL.startsWith("ISI_"))
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true } })
+  : null;
+
+function el(tag, props, ...kids) {
+  const n = document.createElement(tag);
+  if (props) for (const [k, v] of Object.entries(props)) {
+    if (k === "class") n.className = v;
+    else if (k === "text") n.textContent = v;
+    else if (k.startsWith("on")) n.addEventListener(k.slice(2), v);
+    else if (v !== false && v != null) n.setAttribute(k, v === true ? "" : v);
+  }
+  kids.flat().forEach(c => { if (c != null && c !== false) n.append(c.nodeType ? c : document.createTextNode(String(c))); });
+  return n;
+}
+
+/* ---------- tanggal (Asia/Jakarta, string YYYY-MM-DD) ---------- */
+const fmtYMD = new Intl.DateTimeFormat("en-CA", { timeZone: TZ, year: "numeric", month: "2-digit", day: "2-digit" });
+const todayStr = () => fmtYMD.format(new Date());
+const dateOfIso = iso => fmtYMD.format(new Date(iso));
+const toDate = s => new Date(s + "T00:00:00Z");
+const toStr = d => d.toISOString().slice(0, 10);
+const addDays = (s, n) => { const d = toDate(s); d.setUTCDate(d.getUTCDate() + n); return toStr(d); };
+const weekDays = s => { const a = addDays(s, -((toDate(s).getUTCDay() + 6) % 7)); return Array.from({ length: 7 }, (_, i) => addDays(a, i)); };
+const fmt = (s, o) => toDate(s).toLocaleDateString("id-ID", { timeZone: "UTC", ...o });
+const jamWIB = iso => new Date(iso).toLocaleTimeString("id-ID", { timeZone: TZ, hour: "2-digit", minute: "2-digit", hour12: false }).replace(".", ":") + " WIB";
+
+/* ---------- state ---------- */
+const S = {
+  anggota: [], lap: [], loaded: false,
+  today: todayStr(), anchor: todayStr(),
+  view: "harian", filter: "", admin: false, adminEmail: ""
+};
+const aktifList = () => S.anggota.filter(a => a.aktif).sort((a, b) => a.nama.localeCompare(b.nama, "id"));
+const byId = id => S.anggota.find(a => a.id === id);
+function indexLap() { const m = new Map(); S.lap.forEach(l => m.set(l.tanggal + "|" + l.anggota_id, l)); return m; }
+function cellOf(idx, a, tgl) {
+  const l = idx.get(tgl + "|" + a.id);
+  if (l) return l.status === "Berhalangan" ? { k: "hal", l } : { k: "ok", h: l.halaman, l };
+  if (tgl > S.today) return { k: "future" };
+  if (tgl < dateOfIso(a.created_at)) return { k: "na" };
+  return { k: "belum" };
+}
+
+function setMsg(id, text, kind) { const p = $(id); p.textContent = text || ""; p.className = "msg" + (kind ? " " + kind : ""); }
+function banner(text) { const b = $("banner"); b.hidden = !text; b.textContent = text || ""; }
+function dbFail(e, ctx) {
+  console.error(ctx, e);
+  banner("Data belum bisa dimuat dari server (" + ctx + "). Periksa koneksi internet lalu muat ulang halaman.");
+}
+
+/* ---------- muat data ---------- */
+async function muatAnggota() {
+  const { data, error } = await sb.from("anggota").select("id,nama,aktif,created_at").order("nama");
+  if (error) return dbFail(error, "anggota");
+  S.anggota = data || [];
+}
+async function muatLaporan() {
+  const d = weekDays(S.anchor);
+  const { data, error } = await sb.from("laporan")
+    .select("id,anggota_id,tanggal,status,halaman,catatan,created_at,updated_at")
+    .gte("tanggal", d[0]).lte("tanggal", d[6]);
+  if (error) return dbFail(error, "laporan");
+  S.lap = data || [];
+}
+async function refresh() {
+  if (!sb) return;
+  const t = todayStr();
+  if (t !== S.today) { if (S.anchor === S.today) S.anchor = t; S.today = t; }
+  await Promise.all([muatAnggota(), muatLaporan()]);
+  S.loaded = true;
+  render();
+}
+
+/* ---------- kartu & chip ---------- */
+function card(label, value, tone) { return el("div", { class: "card " + (tone || "") }, el("p", { text: label }), el("b", { text: String(value) })); }
+const ST_LABEL = { ok: "Target terpenuhi", belum: "Belum lengkap", hal: "Berhalangan", future: "Belum dihitung" };
+function statusChip(k) {
+  const map = { ok: ["ok", "Sudah memenuhi"], hal: ["hal", "Berhalangan"], belum: ["belum", "Belum mengisi"], future: ["future", "Belum waktunya"], na: ["future", "Belum bergabung"] };
+  return el("span", { class: "chip " + map[k][0], text: map[k][1] });
+}
+
+/* ---------- harian ---------- */
+function renderHarian() {
+  const tgl = S.anchor, idx = indexLap(), list = aktifList();
+  $("pilihTanggal").value = tgl;
+  $("labelHari").textContent = fmt(tgl, { weekday: "long", day: "numeric", month: "long", year: "numeric" }) + (tgl === S.today ? " (hari ini)" : "");
+  const rows = list.map(a => ({ a, c: cellOf(idx, a, tgl) }));
+  const cnt = k => rows.filter(r => r.c.k === k).length;
+  $("kartuHari").replaceChildren(
+    card("Anggota", list.length),
+    card("Sudah memenuhi", cnt("ok"), "ok"),
+    card("Berhalangan", cnt("hal"), "hal"),
+    card(tgl > S.today ? "Belum waktunya" : "Belum mengisi", tgl > S.today ? cnt("future") : cnt("belum"), "warn")
+  );
+  const head = el("tr", null, ["No.", "Nama", "Halaman", "Keterangan", "Disimpan", "Status"].map(t => el("th", { text: t })));
+  const body = el("tbody");
+  if (!S.loaded) body.append(el("tr", null, el("td", { class: "empty", colspan: 6, text: "Memuat data…" })));
+  else if (!rows.length) body.append(el("tr", null, el("td", { class: "empty", colspan: 6, text: "Belum ada anggota. Admin menambahkan anggota di tab Admin." })));
+  else rows.forEach((r, i) => {
+    const l = r.c.l;
+    body.append(el("tr", null,
+      el("td", { text: i + 1 }),
+      el("td", { class: "name", text: r.a.nama }),
+      el("td", { text: r.c.k === "ok" ? r.c.h : (r.c.k === "hal" ? "-" : "") }),
+      el("td", { class: "ket", text: (l && l.catatan) || "" }),
+      el("td", { class: "waktu", text: l ? jamWIB(l.updated_at) : "" }),
+      el("td", null, statusChip(r.c.k))
+    ));
+  });
+  $("tabelHari").replaceChildren(el("thead", null, head), body);
+}
+
+/* ---------- mingguan ---------- */
+function weekData() {
+  const days = weekDays(S.anchor), idx = indexLap();
+  const rows = aktifList().map(a => {
+    const cells = days.map(d => cellOf(idx, a, d));
+    let ok = 0, hal = 0, belum = 0, total = 0, hitung = 0;
+    cells.forEach(c => {
+      if (c.k === "ok") { ok++; hitung++; total += c.h; }
+      else if (c.k === "hal") { hal++; hitung++; }
+      else if (c.k === "belum") { belum++; hitung++; }
+    });
+    let st = "future";
+    if (hitung > 0) st = belum > 0 ? "belum" : (ok === 0 && hal > 0 ? "hal" : "ok");
+    return { a, cells, ok, hal, belum, total, hitung, st };
+  });
+  return { days, rows, elapsed: days.filter(d => d <= S.today).length };
+}
+function cellChip(c) {
+  if (c.k === "ok") return el("span", { class: "chip ok", text: c.h });
+  if (c.k === "hal") return el("span", { class: "chip hal", text: "-" });
+  if (c.k === "belum") return el("span", { class: "chip belum", text: "Belum" });
+  return "";
+}
+function renderMingguan() {
+  const { days, rows, elapsed } = weekData();
+  $("labelPekan").textContent = fmt(days[0], { day: "numeric", month: "short" }) + " – " + fmt(days[6], { day: "numeric", month: "short", year: "numeric" });
+  const cnt = k => rows.filter(r => r.st === k).length;
+  $("kartuPekan").replaceChildren(card("Anggota", rows.length), card("Target terpenuhi", cnt("ok"), "ok"), card("Belum lengkap", cnt("belum"), "warn"), card("Berhalangan", cnt("hal"), "hal"));
+  const head = el("tr", null,
+    el("th", { text: "Nama" }),
+    days.map((d, i) => el("th", { class: "c" + (d === S.today ? " today" : ""), text: HARI[i] + " " + fmt(d, { day: "numeric" }) })),
+    el("th", { class: "c", text: "Total hal." }),
+    el("th", { text: "Status pekan" })
+  );
+  const body = el("tbody");
+  const shown = rows.filter(r => !S.filter || r.st === S.filter);
+  if (!S.loaded) body.append(el("tr", null, el("td", { class: "empty", colspan: 10, text: "Memuat data…" })));
+  else if (!shown.length) body.append(el("tr", null, el("td", { class: "empty", colspan: 10, text: rows.length ? "Tidak ada anggota dengan status ini." : "Belum ada anggota." })));
+  else shown.forEach(r => body.append(el("tr", null,
+    el("td", { class: "name", text: r.a.nama }),
+    r.cells.map(c => el("td", { class: "c" }, cellChip(c))),
+    el("td", { class: "c", text: r.total }),
+    el("td", null, el("span", { class: "chip " + ({ ok: "ok", belum: "belum", hal: "hal", future: "future" })[r.st], text: r.st === "belum" ? `Belum lengkap · ${r.belum} hari kosong` : ST_LABEL[r.st] }))
+  )));
+  $("tabelPekan").replaceChildren(el("thead", null, head), body);
+  $("legenda").textContent = elapsed === 0
+    ? "Pekan ini belum dimulai, jadi belum ada yang dihitung."
+    : `Dihitung ${elapsed} dari 7 hari yang sudah berjalan, mulai sejak anggota bergabung. “Target terpenuhi” berarti tiap hari berjalan sudah diisi (minimal ${TARGET} halaman atau berhalangan). “Berhalangan” berarti seluruh hari berjalan ditandai berhalangan.`;
+}
+
+/* ---------- admin ---------- */
+let pinTimer = null;
+function tampilPin(teks, pin) {
+  $("pinTeks").textContent = teks + " ";
+  $("pinAngka").textContent = pin;
+  $("pinBox").hidden = false;
+  clearTimeout(pinTimer);
+  pinTimer = setTimeout(() => { $("pinBox").hidden = true; $("pinAngka").textContent = ""; }, 120000);
+}
+function renderAdmin() {
+  $("adminLogin").hidden = S.admin;
+  $("adminPanel").hidden = !S.admin;
+  if (!S.admin) return;
+  $("adminAs").textContent = "Masuk sebagai " + S.adminEmail;
+  const ul = $("daftarAnggota");
+  const all = [...S.anggota].sort((a, b) => a.nama.localeCompare(b.nama, "id"));
+  ul.replaceChildren(...all.map(a => el("li", null,
+    el("span", { class: "who" }, a.nama, a.aktif ? "" : el("span", { class: "chip hal", text: "nonaktif", style: "margin-left:8px" })),
+    el("span", { class: "btns" },
+      el("button", { type: "button", class: "btn secondary sm", text: "Buat PIN baru", onclick: () => resetPin(a) }),
+      el("button", { type: "button", class: "btn secondary sm", text: a.aktif ? "Nonaktifkan" : "Aktifkan", onclick: () => toggleAktif(a) })
+    )
+  )));
+  const sel = $("kAnggota"), cur = sel.value;
+  sel.replaceChildren(...all.map(a => el("option", { value: a.id, text: a.nama + (a.aktif ? "" : " (nonaktif)") })));
+  if (cur && byId(cur)) sel.value = cur;
+  if (!$("kTanggal").value) $("kTanggal").value = S.today;
+}
+async function resetPin(a) {
+  setMsg("adminPesan", "");
+  const { data, error } = await sb.rpc("admin_reset_pin", { p_anggota_id: a.id });
+  if (error) { console.error(error); return setMsg("adminPesan", "Gagal membuat PIN baru. Coba lagi.", "err"); }
+  tampilPin("PIN baru " + a.nama + ":", data);
+}
+async function toggleAktif(a) {
+  setMsg("adminPesan", "");
+  const { error } = await sb.from("anggota").update({ aktif: !a.aktif }).eq("id", a.id);
+  if (error) { console.error(error); return setMsg("adminPesan", "Perubahan gagal disimpan.", "err"); }
+  await refresh();
+}
+async function tambahAnggota(e) {
+  e.preventDefault();
+  const nama = $("namaBaru").value.trim();
+  if (!nama) return;
+  setMsg("adminPesan", "");
+  const { data, error } = await sb.rpc("admin_tambah_anggota", { p_nama: nama });
+  if (error) { console.error(error); return setMsg("adminPesan", "Gagal menambah anggota.", "err"); }
+  if (!data.ok) return setMsg("adminPesan", data.pesan, "err");
+  $("namaBaru").value = "";
+  tampilPin("PIN untuk " + data.nama + ":", data.pin);
+  setMsg("adminPesan", "Anggota ditambahkan. Catat PIN-nya sekarang, tidak akan ditampilkan lagi.", "ok");
+  await refresh();
+}
+async function koreksiMuat() {
+  const id = $("kAnggota").value, tgl = $("kTanggal").value;
+  if (!id || !tgl) return;
+  const { data } = await sb.from("laporan").select("status,halaman,catatan").eq("anggota_id", id).eq("tanggal", tgl).maybeSingle();
+  if (data) {
+    $(data.status === "Berhalangan" ? "kHal" : "kBaca").checked = true;
+    $("kHalaman").value = data.status === "Berhalangan" ? "" : data.halaman;
+    $("kCatatan").value = data.catatan || "";
+    setMsg("kPesan", "Laporan ini sudah ada. Ubah lalu simpan, atau hapus.", "");
+  } else {
+    $("kBaca").checked = true; $("kHalaman").value = ""; $("kCatatan").value = "";
+    setMsg("kPesan", "Belum ada laporan pada tanggal ini.", "");
+  }
+  koreksiJenis();
+}
+function koreksiJenis() {
+  const hal = document.querySelector('input[name="kjenis"]:checked').value === "Berhalangan";
+  $("kHalaman").disabled = hal; if (hal) $("kHalaman").value = "";
+}
+async function koreksiSimpan(e) {
+  e.preventDefault();
+  const id = $("kAnggota").value, tgl = $("kTanggal").value;
+  const status = document.querySelector('input[name="kjenis"]:checked').value;
+  const hal = status === "Berhalangan" ? 0 : Number($("kHalaman").value);
+  if (!id || !tgl) return setMsg("kPesan", "Pilih anggota dan tanggal.", "err");
+  if (status === "Sudah membaca" && (!Number.isInteger(hal) || hal < TARGET || hal > 100)) return setMsg("kPesan", "Jumlah halaman harus 5 sampai 100.", "err");
+  setMsg("kPesan", "Menyimpan…", "");
+  const { error } = await sb.from("laporan").upsert(
+    { anggota_id: id, tanggal: tgl, status, halaman: hal, catatan: $("kCatatan").value.trim(), updated_at: new Date().toISOString() },
+    { onConflict: "anggota_id,tanggal" });
+  if (error) { console.error(error); return setMsg("kPesan", "Gagal menyimpan koreksi.", "err"); }
+  setMsg("kPesan", "Koreksi tersimpan.", "ok");
+  await refresh();
+}
+let hapusArmed = false, hapusT = null;
+async function koreksiHapus() {
+  const b = $("kHapus");
+  if (!hapusArmed) {
+    hapusArmed = true; b.textContent = "Yakin hapus?";
+    hapusT = setTimeout(() => { hapusArmed = false; b.textContent = "Hapus laporan ini"; }, 4000);
+    return;
+  }
+  clearTimeout(hapusT); hapusArmed = false; b.textContent = "Hapus laporan ini";
+  const { error } = await sb.from("laporan").delete().eq("anggota_id", $("kAnggota").value).eq("tanggal", $("kTanggal").value);
+  if (error) { console.error(error); return setMsg("kPesan", "Gagal menghapus.", "err"); }
+  setMsg("kPesan", "Laporan dihapus.", "ok");
+  $("kBaca").checked = true; $("kHalaman").value = ""; $("kCatatan").value = ""; koreksiJenis();
+  await refresh();
+}
+async function cekAdmin() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) { S.admin = false; return; }
+  const { data } = await sb.rpc("is_admin");
+  S.admin = data === true;
+  S.adminEmail = S.admin ? (session.user.email || "") : "";
+  if (!S.admin) await sb.auth.signOut();
+}
+async function login(e) {
+  e.preventDefault();
+  const email = $("aEmail").value.trim(), password = $("aPass").value;
+  if (!email || !password) return setMsg("loginPesan", "Isi email dan password.", "err");
+  $("loginBtn").disabled = true; setMsg("loginPesan", "Masuk…", "");
+  const { error } = await sb.auth.signInWithPassword({ email, password });
+  $("loginBtn").disabled = false;
+  if (error) return setMsg("loginPesan", "Email atau password salah.", "err");
+  await cekAdmin();
+  if (!S.admin) return setMsg("loginPesan", "Akun ini bukan admin.", "err");
+  $("aPass").value = ""; setMsg("loginPesan", "");
+  await refresh(); koreksiMuat();
+}
+async function logout() { await sb.auth.signOut(); S.admin = false; S.adminEmail = ""; await refresh(); }
+
+/* ---------- form anggota ---------- */
+function setJenis() {
+  const hal = document.querySelector('input[name="jenis"]:checked').value === "Berhalangan";
+  $("halaman").disabled = hal; if (hal) $("halaman").value = "";
+  $("hintHalaman").textContent = hal ? "ditandai -" : "minimal 5";
+}
+async function prefill() {
+  const id = $("namaSel").value;
+  if (!id || !sb) return;
+  const { data } = await sb.from("laporan").select("status,halaman,catatan").eq("anggota_id", id).eq("tanggal", todayStr()).maybeSingle();
+  if (data) {
+    $(data.status === "Berhalangan" ? "jenisHalangan" : "jenisBaca").checked = true;
+    setJenis();
+    if (data.status !== "Berhalangan") $("halaman").value = data.halaman;
+    $("catatan").value = data.catatan || "";
+    $("simpan").textContent = "Perbarui laporan";
+    setMsg("pesan", "Laporan hari ini sudah ada. Masukkan PIN untuk memperbaruinya.", "");
+  } else { $("simpan").textContent = "Simpan laporan"; setMsg("pesan", ""); }
+}
+async function simpan(e) {
+  e.preventDefault();
+  if (!sb) return setMsg("pesan", "Halaman belum dihubungkan ke database.", "err");
+  const id = $("namaSel").value, pin = $("pin").value.trim();
+  const status = document.querySelector('input[name="jenis"]:checked').value;
+  const hal = status === "Berhalangan" ? 0 : Number($("halaman").value);
+  if (!id) { $("namaSel").focus(); return setMsg("pesan", "Pilih nama dulu.", "err"); }
+  if (!pin) { $("pin").focus(); return setMsg("pesan", "Masukkan PIN.", "err"); }
+  if (status === "Sudah membaca" && (!Number.isInteger(hal) || hal < TARGET || hal > 100)) {
+    $("halaman").focus();
+    return setMsg("pesan", `Jumlah halaman minimal ${TARGET}. Jika sedang berhalangan, pilih “Berhalangan (-)”.`, "err");
+  }
+  $("simpan").disabled = true; setMsg("pesan", "Menyimpan…", "");
+  try {
+    const { data, error } = await sb.rpc("simpan_laporan", { p_anggota_id: id, p_pin: pin, p_status: status, p_halaman: hal, p_catatan: $("catatan").value.trim() });
+    if (error) throw error;
+    if (!data.ok) return setMsg("pesan", data.pesan, "err");
+    $("pin").value = "";
+    setMsg("pesan", status === "Berhalangan" ? `Tersimpan: ${data.nama} berhalangan hari ini.` : `Tersimpan: ${data.nama}, ${data.halaman} halaman.`, "ok");
+    $("simpan").textContent = "Perbarui laporan";
+    S.anchor = S.today;
+    await refresh();
+  } catch (err) {
+    console.error(err);
+    setMsg("pesan", "Gagal menyimpan. Periksa koneksi lalu coba lagi.", "err");
+  } finally { $("simpan").disabled = false; }
+}
+
+/* ---------- unduh ---------- */
+function tabelUnduh() {
+  const { days, rows } = weekData();
+  const head = ["Nama", ...days.map((d, i) => HARI[i] + " " + fmt(d, { day: "numeric", month: "short" })), "Total halaman", "Hari memenuhi", "Hari berhalangan", "Hari belum mengisi", "Status"];
+  const body = rows.filter(r => !S.filter || r.st === S.filter).map(r => [
+    r.a.nama,
+    ...r.cells.map(c => c.k === "ok" ? String(c.h) : c.k === "hal" ? "-" : c.k === "belum" ? "Belum" : ""),
+    String(r.total), String(r.ok), String(r.hal), String(r.belum), ST_LABEL[r.st]
+  ]);
+  return { head, body, days };
+}
+function simpanFile(name, blob) {
+  const url = URL.createObjectURL(blob);
+  const a = el("a", { href: url, download: name });
+  document.body.append(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+function unduhCSV() {
+  const { head, body, days } = tabelUnduh();
+  const csv = [head, ...body].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(";")).join("\r\n");
+  simpanFile(`rekap-tilawah-${days[0]}.csv`, new Blob(["﻿" + csv], { type: "text/csv;charset=utf-8" }));
+}
+function unduhPDF() {
+  if (!window.jspdf || !window.jspdf.jsPDF) return banner("Pustaka PDF belum termuat. Periksa koneksi lalu muat ulang halaman.");
+  const { head, body, days } = tabelUnduh();
+  const doc = new window.jspdf.jsPDF({ orientation: "landscape", unit: "mm", format: "a4" });
+  doc.setFont("helvetica", "bold"); doc.setFontSize(14); doc.setTextColor(23, 107, 69);
+  doc.text("REKAP MINGGUAN TILAWAH AL-QUR'AN - IKRA AL-IKHLAS", 14, 15);
+  doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(93, 108, 99);
+  doc.text("Pekan " + fmt(days[0], { day: "numeric", month: "short" }) + " - " + fmt(days[6], { day: "numeric", month: "short", year: "numeric" }) + "   |   Target harian minimal " + TARGET + " halaman", 14, 21);
+  doc.autoTable({
+    startY: 26, head: [head], body, theme: "grid",
+    styles: { fontSize: 8, cellPadding: 2, lineColor: [220, 229, 223], lineWidth: 0.2, textColor: [28, 42, 35] },
+    headStyles: { fillColor: [227, 242, 233], textColor: [20, 88, 58], fontStyle: "bold" },
+    margin: { left: 14, right: 14 }
+  });
+  doc.save(`rekap-tilawah-${days[0]}.pdf`);
+}
+
+/* ---------- render & rute ---------- */
+function render() {
+  $("tglHariIni").textContent = fmt(S.today, { weekday: "long", day: "numeric", month: "long", year: "numeric" });
+  const sel = $("namaSel"), cur = sel.value;
+  sel.replaceChildren(el("option", { value: "", text: S.loaded ? "Pilih nama…" : "Memuat daftar nama…" }), ...aktifList().map(a => el("option", { value: a.id, text: a.nama })));
+  if (cur && aktifList().some(a => a.id === cur)) sel.value = cur;
+  [["harian", "tabHarian"], ["mingguan", "tabMingguan"], ["admin", "tabAdmin"]].forEach(([v, id]) => {
+    if (S.view === v) $(id).setAttribute("aria-current", "page"); else $(id).removeAttribute("aria-current");
+  });
+  $("viewHarian").hidden = S.view !== "harian";
+  $("viewMingguan").hidden = S.view !== "mingguan";
+  $("viewAdmin").hidden = S.view !== "admin";
+  if (S.view === "harian") renderHarian();
+  else if (S.view === "mingguan") renderMingguan();
+  else renderAdmin();
+}
+function route() {
+  S.view = ({ "#mingguan": "mingguan", "#admin": "admin" })[location.hash] || "harian";
+  render();
+}
+async function geserAnchor(a) { S.anchor = a; render(); await muatLaporan(); render(); }
+
+/* ---------- peristiwa ---------- */
+$("formLaporan").addEventListener("submit", simpan);
+$("namaSel").addEventListener("change", prefill);
+document.querySelectorAll('input[name="jenis"]').forEach(r => r.addEventListener("change", setJenis));
+document.querySelectorAll('input[name="kjenis"]').forEach(r => r.addEventListener("change", koreksiJenis));
+$("pilihTanggal").addEventListener("change", () => { if ($("pilihTanggal").value) geserAnchor($("pilihTanggal").value); });
+$("hariIni").addEventListener("click", () => geserAnchor(S.today));
+$("pekanPrev").addEventListener("click", () => geserAnchor(addDays(S.anchor, -7)));
+$("pekanNext").addEventListener("click", () => geserAnchor(addDays(S.anchor, 7)));
+$("pekanIni").addEventListener("click", () => geserAnchor(S.today));
+$("filterStatus").addEventListener("change", () => { S.filter = $("filterStatus").value; render(); });
+$("csvBtn").addEventListener("click", unduhCSV);
+$("pdfBtn").addEventListener("click", unduhPDF);
+$("formLogin").addEventListener("submit", login);
+$("logoutBtn").addEventListener("click", logout);
+$("formTambah").addEventListener("submit", tambahAnggota);
+$("formKoreksi").addEventListener("submit", koreksiSimpan);
+$("kHapus").addEventListener("click", koreksiHapus);
+$("kAnggota").addEventListener("change", koreksiMuat);
+$("kTanggal").addEventListener("change", koreksiMuat);
+$("pinSalin").addEventListener("click", async () => {
+  try { await navigator.clipboard.writeText($("pinAngka").textContent); setMsg("adminPesan", "PIN disalin.", "ok"); }
+  catch (e) { setMsg("adminPesan", "Tidak bisa menyalin otomatis. Catat PIN secara manual.", "err"); }
+});
+window.addEventListener("hashchange", route);
+document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
+setInterval(() => { if (!document.hidden) refresh(); }, 60000);
+
+/* ---------- mulai ---------- */
+(async function start() {
+  setJenis(); route();
+  if (!sb) {
+    banner(SUPABASE_URL.startsWith("ISI_")
+      ? "Halaman belum dihubungkan ke Supabase. Isi SUPABASE_URL dan SUPABASE_KEY di index.html."
+      : "Pustaka Supabase gagal dimuat. Periksa koneksi internet lalu muat ulang.");
+    S.loaded = true; render(); return;
+  }
+  await cekAdmin();
+  await refresh();
+  if (S.admin) koreksiMuat();
+})();
+</script>
+</body>
+</html>
